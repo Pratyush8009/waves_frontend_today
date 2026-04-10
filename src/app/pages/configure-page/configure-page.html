@@ -1,0 +1,140 @@
+<div class="page-container">
+
+    <div class="left-panel">
+        <div class="title">
+            <h3>Block Editor</h3>
+        </div>
+
+        <div class="nodes">
+            <nz-divider nzText="System" />
+            <div *ngFor="let node of systemNodes" [ngClass]="{
+                'library-node': true,
+                'input-node': node.type === 'input',
+                'output-node': node.type === 'output',
+                'disabled-node': !isEditMode
+              }" [attr.draggable]="isEditMode" (dragstart)="isEditMode && onDragStart($event, node)">
+                <span *ngIf="node.type === 'input'" class="endpoint right"></span>
+                <span *ngIf="node.type === 'output'" class="endpoint left"></span>
+                {{ node.name }}
+            </div>
+
+            <nz-divider nzText="Custom Block" />
+            <div class="nodes">
+                <div class="library-node block-node" [ngClass]="{'disabled-node': !isEditMode}"
+                    *ngFor="let node of blockNodes" [attr.draggable]="isEditMode"
+                    (dragstart)="isEditMode && onDragStart($event, node)">
+                    <span class="endpoint left"></span>
+                    <span class="endpoint right"></span>
+                    {{ node.name }}
+                </div>
+            </div>
+
+            <nz-divider nzText="Block Palet" />
+            <div class="nodes">
+                <div class="library-node block-node" [ngClass]="{'disabled-node': !isEditMode}"
+                    *ngFor="let node of blockPalet" [attr.draggable]="isEditMode"
+                    (dragstart)="isEditMode && onDragStart($event, node)">
+                    <span class="endpoint left"></span>
+                    <span class="endpoint right"></span>
+                    {{ node.name }}
+                </div>
+            </div>
+
+            <nz-divider nzText="Saved Blocks" />
+            <div class="nodes">
+                <div class="library-node block-node" [ngClass]="{'disabled-node': !isEditMode}"
+                    *ngFor="let node of savedBlocks" [attr.draggable]="isEditMode"
+                    (dragstart)="isEditMode && onDragStart($event, node)">
+                    <span class="endpoint left"></span>
+                    <span class="endpoint right"></span>
+                    {{ node.name }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <nz-splitter nzLayout="vertical" class="main-splitter">
+        <nz-splitter-panel nzMin="20%" [nzCollapsible]="true">
+
+            <div class="center-panel" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+                <div class="top-bar">
+                    <nz-breadcrumb>
+                        <nz-breadcrumb-item>System</nz-breadcrumb-item>
+                        <nz-breadcrumb-item>Model : {{version}}</nz-breadcrumb-item>
+                    </nz-breadcrumb>
+
+                    <div class="controlles">
+                        <span *ngIf="isEditMode" class="draft-badge">Draft Mode</span>
+
+                        <button nz-button [nzType]="isEditMode ? 'primary' : 'default'" (click)="toggleEditSave()">
+                            {{ isEditMode ? 'Save' : 'Edit' }}
+                        </button>
+
+                        <div class="icons">
+                            <div class="screen-mode" (click)="toggleFullscreen()" nz-tooltip nzTooltipTitle="Maximize">
+                                <nz-icon *ngIf="!isFullscreen" nzType="fullscreen" nzTheme="outline" />
+                                <nz-icon *ngIf="isFullscreen" nzType="fullscreen-exit" nzTheme="outline" />
+                            </div>
+                            <div class="screen-mode" nz-tooltip nzTooltipTitle="Go to Flow Editor">
+                                <nz-icon nzType="partition" nzTheme="outline" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div #container class="canvas" [ngClass]="{'canvas-locked': !isEditMode}">
+                    <div *ngFor="let node of flowNodes" [id]="node.id" [ngClass]="{
+                         'input-instance-node': node.type === 'input',
+                         'output-instance-node': node.type === 'output',
+                         'block-instance-node': node.type === 'block'
+                      }" [style.left.px]="node.position.x" [style.top.px]="node.position.y" (dblclick)="open(node)"
+                        (contextmenu)="isEditMode && openContextMenu($event, node)">
+                        {{ node.name }}
+                    </div>
+                </div>
+            </div>
+        </nz-splitter-panel>
+
+        <nz-splitter-panel [nzCollapsible]="true" *ngIf="is_log">
+            <div class="logs-panel">
+                <app-logs [logs]="logs"></app-logs>
+            </div>
+        </nz-splitter-panel>
+    </nz-splitter>
+
+    <div class="context-menu" *ngIf="isContextMenuVisible && isEditMode" [style.top.px]="contextMenuPosition.y"
+        [style.left.px]="contextMenuPosition.x">
+        <div class="menu-item" (click)="renameNode()">Rename</div>
+        <div class="menu-item" (click)="viewDetails()">View Details</div>
+        <div class="menu-item" (click)="duplicateNode()">Duplicate</div>
+        <div class="menu-item" (click)="createFlow()">Create Flow</div>
+        <div class="menu-item" (click)="saveBlock()">Save Block</div>
+        <div class="menu-item delete" (click)="deleteNode()">Delete</div>
+    </div>
+
+    <div class="right-panel">
+        <app-block-config-pannel [selectedNode]="selectedNode">
+        </app-block-config-pannel>
+    </div>
+
+</div>
+
+<nz-modal [(nzVisible)]="isModalVisible" nzTitle="Create New Flow Version" (nzOnCancel)="handleCancel()"
+    (nzOnOk)="handleSaveVersion()">
+    <ng-container *nzModalContent>
+        <div class="flow-modal-content">
+            <div class="form-group">
+                <label>Version Name</label>
+                <input nz-input placeholder="e.g., v1.1.0 or Adding Process Block" [(ngModel)]="versionName" />
+            </div>
+            <div class="form-group">
+                <label>Commit Message</label>
+                <textarea nz-input rows="3" placeholder="Describe what changed..."
+                    [(ngModel)]="versionCommit"></textarea>
+            </div>
+        </div>
+    </ng-container>
+</nz-modal>
+
+<p>{{showFlow}}</p>

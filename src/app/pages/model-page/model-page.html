@@ -1,0 +1,55 @@
+<div class="page-container">
+    <nz-tabs nzType="card" class="system-tabs" [(nzSelectedIndex)]="selectedTabIndex">
+        <nz-tab nzTitle="Overview">
+            <div class="tab-content flow-tab">
+                <app-model-overview></app-model-overview>
+            </div>
+        </nz-tab>
+        <!-- Edit System Tab -->
+        <nz-tab nzTitle="Edit Model">
+
+            <div class="switching-section">
+                <div class="mode-toggle">
+                    <div class="toggle-option" [class.active]="!isFlowMode" (click)="toggleEditor()">
+                        Block Editor
+                    </div>
+
+                    <div class="toggle-option" [class.active]="isFlowMode" (click)="toggleEditor()">
+                        Flow Editor
+                    </div>
+                </div>
+
+            </div>
+            <div class="tab-content" [class.fullscreen]="isFullScreen">
+                <div class="config-wrapper" [class.fullscreen]="isFullScreen">
+                    <app-configure-page *ngIf="!isFlowMode" (fullscreenChange)="onFullscreenChange($event)"
+                        [version]="selectedVersion"></app-configure-page>
+                    <app-flow-editor (fullscreenChange)="onFullscreenChange($event)"
+                        *ngIf="isFlowMode"></app-flow-editor>
+                </div>
+
+            </div>
+        </nz-tab>
+
+
+
+        <!-- Edit Block Tab -->
+        <nz-tab nzTitle="Configuration">
+            <div class="tab-content flow-tab">
+                <app-system-summary></app-system-summary>
+                <app-system-schema></app-system-schema>
+                <app-subsystem-details></app-subsystem-details>
+            </div>
+        </nz-tab>
+
+
+        <!-- Deployment Tab -->
+        <nz-tab nzTitle="Deployment">
+            <div class="tab-content flow-tab">
+                <!-- Flow content will go here -->
+                <app-deploy></app-deploy>
+            </div>
+        </nz-tab>
+    </nz-tabs>
+
+</div>

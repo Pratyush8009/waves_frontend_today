@@ -1,0 +1,198 @@
+:host {
+    display: block;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+}
+
+.analysis-container {
+    padding: 32px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+/* Summary Card Styling */
+.summary-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 32px;
+    border: 1px solid #dbeafe;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin-bottom: 32px;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 28px;
+}
+
+.title-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.icon-wrapper {
+    background: #e6f4ff;
+    color: #1677ff;
+    padding: 14px;
+    border-radius: 14px;
+    font-size: 28px;
+    display: flex;
+}
+
+.title-section h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #1e293b;
+}
+
+.id-badge {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+    letter-spacing: 0.05em;
+}
+
+.stats-banner {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid #f1f5f9;
+}
+
+.banner-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.banner-item .label {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #64748b;
+    font-weight: 700;
+}
+
+.banner-item .value {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.glass-metric {
+    border-radius: 16px;
+    border: 1px solid #ffffff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+}
+
+.glass-metric:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.metric-footer {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #94a3b8;
+}
+
+.icon-blue {
+    color: #1677ff;
+}
+
+.icon-green {
+    color: #52c41a;
+}
+
+.trend-up {
+    color: #52c41a;
+    font-weight: 700;
+}
+
+/* Table Container */
+.table-container {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+.report-id {
+    font-weight: 700;
+    color: #1677ff;
+}
+
+/* Button UI */
+.btn-primary {
+    height: 40px;
+    font-weight: 600;
+}
+
+.btn-secondary {
+    height: 40px;
+    margin-right: 12px;
+}
+
+::ng-deep .ant-divider-inner-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #cbd5e1;
+    text-transform: uppercase;
+}
+
+/* ... existing styles ... */
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.pending-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.inactive-card {
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+    background: #f8fafc;
+}
+
+.card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.card-info h4 {
+    margin: 8px 0 4px 0;
+    font-weight: 700;
+}
+
+.card-info p {
+    color: #64748b;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+.card-info small {
+    display: block;
+    color: #94a3b8;
+    font-style: italic;
+}

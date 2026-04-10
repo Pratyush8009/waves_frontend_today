@@ -1,0 +1,97 @@
+.upload-container {
+    max-width: 800px;
+    margin: 50px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+::ng-deep .ant-card-head-title {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.upload-drag-area {
+    background: #fafafa;
+    border: 2px dashed #d9d9d9 !important;
+    border-radius: 8px;
+}
+
+.browse-link {
+    color: #1890ff;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.upload-hint {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    color: #8c8c8c;
+    font-size: 12px;
+}
+
+/* File Progress Card */
+.file-list-container {
+    margin-top: 20px;
+}
+
+.file-item-card {
+    background: #f7f9fc;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.file-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+    margin-bottom: 8px;
+}
+
+.excel-icon {
+    font-size: 24px;
+    color: #217346;
+    /* Excel Green */
+    margin-right: 12px;
+}
+
+.file-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.file-name {
+    font-weight: 600;
+    color: #262626;
+}
+
+.file-size {
+    font-size: 12px;
+    color: #8c8c8c;
+}
+
+.remove-icon {
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    color: #bfbfbf;
+}
+
+/* Footer Styling */
+.upload-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.help-link {
+    color: #8c8c8c;
+    font-size: 13px;
+}
+
+.button-group button {
+    margin-left: 8px;
+    border-radius: 6px;
+}

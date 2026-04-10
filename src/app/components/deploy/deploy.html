@@ -1,0 +1,46 @@
+<nz-card class="validation-container" [nzTitle]="titleTpl">
+    <div class="header-row">
+        <p class="subtitle">Test the system configuration to ensure it is ready for deployment.</p>
+        <button nz-button nzType="primary" (click)="runFullValidation()">
+            Run Full Validation
+        </button>
+    </div>
+
+    <nz-list nzSplit="false">
+        @for (item of validationSteps(); track item.label; let i = $index) {
+        <nz-list-item class="validation-item">
+            <div class="label-group">
+                <span nz-icon [nzType]="item.status === 'success' ? 'check-circle' : 'check-circle'"
+                    [class.icon-success]="item.status === 'success'" [class.icon-pending]="item.status !== 'success'"
+                    nzTheme="fill">
+                </span>
+                <span class="label-text">{{ item.label }}</span>
+            </div>
+
+            <button nz-button nzSize="small" [class.btn-success]="item.status === 'success'"
+                [class.btn-run]="item.status !== 'success'" [nzLoading]="item.status === 'loading'"
+                (click)="runTest(i)">
+                @if (item.status === 'success') {
+                <span nz-icon nzType="check"></span>
+                }
+                Test
+            </button>
+        </nz-list-item>
+        }
+    </nz-list>
+
+    <div class="footer-actions">
+        <button nz-button nzType="default" class="footer-btn">Close</button>
+        <button nz-button nzType="primary" class="footer-btn deploy-btn" [disabled]="!canDeploy()">
+            Deploy
+        </button>
+    </div>
+</nz-card>
+
+<ng-template #titleTpl>
+    <span class="card-title">Pre-Deployment Validation</span>
+</ng-template>
+
+<ng-template #closeTpl>
+    <span nz-icon nzType="close" class="close-icon"></span>
+</ng-template>

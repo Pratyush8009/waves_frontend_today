@@ -1,0 +1,136 @@
+<div class="analysis-container">
+    <section class="summary-card">
+        <div *ngIf="loading" class="loader">
+            <nz-spin nzSimple nzSize="large"></nz-spin>
+        </div>
+
+        <div *ngIf="!loading && analysisData">
+            <div class="card-header">
+                <div class="title-section">
+                    <div class="icon-wrapper">
+                        <span nz-icon nzType="reconciliation" nzTheme="outline"></span>
+                    </div>
+                    <div>
+                        <h3>Execution Summary</h3>
+                        <p class="id-badge">ID: {{ systemId }}</p>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button nz-button nzType="default" class="btn-secondary">
+                        <span nz-icon nzType="download"></span> Export
+                    </button>
+                    <button nz-button nzType="primary" class="btn-primary" (click)="showCreateModal()">
+                        <span nz-icon nzType="plus"></span> Create Analysis
+                    </button>
+
+                </div>
+            </div>
+
+            <div class="stats-banner">
+                <div class="banner-item">
+                    <span class="label">Last Analysis</span>
+                    <span class="value">{{ formatDate(analysisData.lastRun) }}</span>
+                </div>
+                <div class="banner-item">
+                    <span class="label">Health Score</span>
+                    <nz-badge nzStatus="success" nzText="Excellent"></nz-badge>
+                </div>
+                <div class="banner-item">
+                    <span class="label">Total Iterations</span>
+                    <span class="value">{{ analysisHistory.length + pendingAnalyses.length }}</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="pending-section" *ngIf="pendingAnalyses.length > 0">
+        <nz-divider nzPlain nzText="Pending / Inactive" nzOrientation="left"></nz-divider>
+        <div class="pending-grid">
+            <nz-card *ngFor="let item of pendingAnalyses" class="inactive-card">
+                <div class="card-content">
+                    <div class="card-info">
+                        <nz-tag nzColor="default">Inactive</nz-tag>
+                        <h4>{{ item.name }}</h4>
+                        <p>{{ item.description }}</p>
+                        <small>Created: {{ formatDate(item.createdAt) }}</small>
+                    </div>
+                    <button nz-button nzType="primary" nzGhost>
+                        Go to Analysis <span nz-icon nzType="arrow-right"></span>
+                    </button>
+                </div>
+            </nz-card>
+        </div>
+    </div>
+
+    <div class="metrics-grid" *ngIf="!loading">
+        <nz-card class="glass-metric">
+            <nz-statistic [nzValue]="analysisData.blockCount" [nzTitle]="'Processed Blocks'"
+                [nzPrefix]="blockIcon"></nz-statistic>
+            <ng-template #blockIcon><span nz-icon nzType="block" class="icon-blue"></span></ng-template>
+            <div class="metric-footer">Across 12 Sub-systems</div>
+        </nz-card>
+        <nz-card class="glass-metric">
+            <nz-statistic [nzValue]="analysisData.flowCount" [nzTitle]="'Analyzed Flows'"
+                [nzPrefix]="flowIcon"></nz-statistic>
+            <ng-template #flowIcon><span nz-icon nzType="branches" class="icon-green"></span></ng-template>
+            <div class="metric-footer">0% Data leakage detected</div>
+        </nz-card>
+        <nz-card class="glass-metric">
+            <nz-statistic [nzValue]="99.4" [nzTitle]="'Analysis Accuracy'" [nzSuffix]="'%'"
+                [nzValueStyle]="{ color: '#0958d9' }"></nz-statistic>
+            <div class="metric-footer"><span class="trend-up">↑ 0.4%</span> vs average</div>
+        </nz-card>
+    </div>
+
+    <nz-divider nzPlain nzText="Analysis History" nzOrientation="left"></nz-divider>
+    <div class="table-container" *ngIf="!loading">
+        <nz-table #historyTable [nzData]="analysisHistory" nzSize="middle" [nzShowPagination]="false">
+            <thead>
+                <tr>
+                    <th>Report ID</th>
+                    <th>Execution Date</th>
+                    <th>Blocks</th>
+                    <th>Flows</th>
+                    <th>Reliability</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let run of historyTable.data">
+                    <td class="report-id">{{ run.id }}</td>
+                    <td>{{ formatDate(run.date) }}</td>
+                    <td>{{ run.blocks }}</td>
+                    <td>{{ run.flows }}</td>
+                    <td>
+                        <nz-progress [nzPercent]="run.accuracy" nzSize="small"
+                            [nzStrokeColor]="run.accuracy > 90 ? '#52c41a' : '#faad14'"></nz-progress>
+                    </td>
+                    <td><nz-tag [nzColor]="run.status === 'Completed' ? 'green' : 'red'">{{ run.status }}</nz-tag></td>
+                    <td><button nz-button nzType="link">Details</button></td>
+                </tr>
+            </tbody>
+        </nz-table>
+    </div>
+</div>
+
+<nz-modal [(nzVisible)]="isModalVisible" nzTitle="Create New Analysis" (nzOnCancel)="handleCancel()"
+    (nzOnOk)="submitAnalysis()">
+    <ng-container *nzModalContent>
+        <form nz-form [formGroup]="analysisForm" nzLayout="vertical">
+            <nz-form-item>
+                <nz-form-label nzRequired>Analysis Name</nz-form-label>
+                <nz-form-control nzErrorTip="Please input a name!">
+                    <input nz-input formControlName="name" placeholder="e.g. Monthly Flow Validation" />
+                </nz-form-control>
+            </nz-form-item>
+            <nz-form-item>
+                <nz-form-label nzRequired>Description</nz-form-label>
+                <nz-form-control nzErrorTip="Please provide a description!">
+                    <textarea nz-input formControlName="description" rows="4"
+                        placeholder="Briefly describe the purpose of this analysis"></textarea>
+                </nz-form-control>
+            </nz-form-item>
+        </form>
+    </ng-container>
+</nz-modal>

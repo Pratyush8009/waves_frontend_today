@@ -1,0 +1,206 @@
+<div class="page-container">
+
+    <div class="left-panel">
+        <div class="title">
+            <h3>Flow Editor</h3>
+        </div>
+
+
+        <nz-splitter nzLayout="vertical">
+            <nz-splitter-panel>
+                <!-- Header -->
+                <div class="flows-header">
+                    <div class="flows-title">Flows</div>
+
+                    <div class="flows-actions">
+                        <nz-icon nzType="plus" nzTheme="outline" class="header-icon"
+                            (click)="openCreateFlowModal()"></nz-icon>
+                        <nz-icon nzType="reload" nzTheme="outline" class="header-icon"></nz-icon>
+                        <nz-icon nzType="filter" nzTheme="outline" class="header-icon"></nz-icon>
+                    </div>
+                </div>
+
+                <!-- Search Bar -->
+                <div class="flows-search">
+                    <input nz-input placeholder="Search flows..." />
+                </div>
+
+                <div class="saved-flow" [ngClass]="{'active-flow': currentEditingFlow?.flowId === flow.flowId}"
+                    *ngFor="let flow of saveFlows" (click)="loadSavedFlow(flow)">
+                    <nz-icon nzType="partition" nzTheme="outline" />
+                    {{ flow.name }}
+                    <nz-icon nzType="delete" nzTheme="outline" (click)="deleteFlow(flow.flowId)"
+                        class="flow-delete-icon" />
+                </div>
+
+            </nz-splitter-panel>
+            <nz-splitter-panel>
+                <nz-collapse>
+                    @for (panel of panels; track panel) {
+                    <nz-collapse-panel [nzHeader]="panel.name" [nzActive]="panel.active">
+                        <div class="nodes">
+                            <div *ngFor="let node of panel.nodes"
+                                [ngClass]="{'library-node': true,'input-node': node.type === 'input','output-node': node.type === 'output','processing-node':node.type==='processing','model-node':node.type==='model'}"
+                                draggable="true" (dragstart)="onDragStart($event, node)">
+                                <span *ngIf="node.type === 'input'" class="endpoint right"></span>
+                                <span *ngIf="node.type === 'output'" class="endpoint left"></span>
+                                <span *ngIf="node.type === 'processing'|| node.type === 'model'"
+                                    class="endpoint left"></span>
+                                <span *ngIf="node.type === 'processing' || node.type === 'model'"
+                                    class="endpoint right"></span>
+                                {{ node.name }}
+                            </div>
+                        </div>
+                    </nz-collapse-panel>
+                    }
+                </nz-collapse>
+
+            </nz-splitter-panel>
+        </nz-splitter>
+
+    </div>
+
+
+
+
+
+
+    <!-- ========================CENTER PANEL========================== -->
+    <nz-splitter nzLayout="vertical" class="main-splitter">
+        <nz-splitter-panel nzMin="20%" [nzCollapsible]="true">
+
+            <div class="center-panel" (dragover)="onDragOver($event)" (drop)="onDrop($event)">
+
+                <div class="top-bar">
+                    <nz-breadcrumb>
+                        <nz-breadcrumb-item>
+                            <nz-select [ngModel]="block.name" (ngModelChange)="onVersionChange($event)"
+                                placeholder="Select Block">
+                                <nz-option *ngFor="let block of blocks" [nzLabel]="block.label" [nzValue]="block.value">
+                                </nz-option>
+                            </nz-select>
+                        </nz-breadcrumb-item>
+
+                        <nz-breadcrumb-item *ngIf="currentEditingFlow">{{ currentEditingFlow.name
+                            }}</nz-breadcrumb-item>
+
+                    </nz-breadcrumb>
+
+
+
+                    <div class="controlles">
+                        <button nz-button nzType="primary" (click)="saveCurrentFlow()">Save</button>
+
+                        <div class="icons">
+                            <div class="screen-mode" (click)="toggleFullscreen()" nz-tooltip nzTooltipTitle="Maximize">
+                                <nz-icon *ngIf="!isFullscreen" nzType="fullscreen" nzTheme="outline" />
+                                <nz-icon *ngIf="isFullscreen" nzType="fullscreen-exit" nzTheme="outline" />
+
+                            </div>
+                            <div class="screen-mode" nz-tooltip nzTooltipTitle="Go to Flow Editor">
+                                <nz-icon nzType="partition" nzTheme="outline" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div #container class="canvas">
+                    <div *ngFor="let node of flowNodes" [id]="node.id" [ngClass]="{
+     'input-instance-node': node.type === 'input',
+     'output-instance-node': node.type === 'output',
+     'processing-instance-node': node.type === 'processing',
+     'model-instance-node': node.type === 'model'
+  }" [style.left.px]="node.position.x" [style.top.px]="node.position.y" (dblclick)="open(node)"
+                        (contextmenu)="openContextMenu($event, node)">
+                        {{ node.name }}
+                    </div>
+                </div>
+            </div>
+        </nz-splitter-panel>
+        <nz-splitter-panel [nzCollapsible]="true" *ngIf="is_log">
+            <div class="logs-panel">
+                <app-logs [logs]="logs"></app-logs>
+            </div>
+        </nz-splitter-panel>
+    </nz-splitter>
+
+    <!-- CUSTOM RIGHT CLICK MENU -->
+    <div class="context-menu" *ngIf="isContextMenuVisible" [style.top.px]="contextMenuPosition.y"
+        [style.left.px]="contextMenuPosition.x">
+        <div class="menu-item" (click)="renameNode()">Rename</div>
+        <div class="menu-item" (click)="viewDetails()">View Details</div>
+        <div class="menu-item" (click)="duplicateNode()">Duplicate</div>
+        <div class="menu-item delete" (click)="deleteNode()">Delete</div>
+    </div>
+
+
+
+    <!-- ========================RIGHT PANEL========================== -->
+    <div class="right-panel">
+        <app-flow-config-panel [selectedNode]="selectedNode">
+        </app-flow-config-panel>
+    </div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<nz-modal [(nzVisible)]="isFlowModalVisible" [nzContent]="modalContent" nzTitle="Create Block Flow"
+    (nzOnCancel)="closeFlowModal()" (nzOnOk)="saveFlow()" nzOkText="Create">
+
+    <ng-template #modalContent>
+        <div class="flow-modal-content">
+
+            <div class="form-group">
+                <label>Flow Name</label>
+                <input nz-input [(ngModel)]="flowForm.name" placeholder="Enter flow name" />
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea nz-input rows="3" [(ngModel)]="flowForm.description" placeholder="Enter description">
+        </textarea>
+            </div>
+
+            <div class="form-group">
+                <label>Generated Flow ID</label>
+                <input nz-input [ngModel]="flowForm.flowId" disabled />
+            </div>
+
+        </div>
+    </ng-template>
+
+</nz-modal>
+<p>{{showFlow}}</p>
